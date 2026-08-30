@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# ML Artifacts & Data (Excluding raw data/model binaries)
+data/
+models/
+outputs/shap_summary.png
+outputs/evaluation_metrics.json
+outputs/evaluation_summary.txt
+
+# OS metadata
+.DS_Store
+Thumbs.db

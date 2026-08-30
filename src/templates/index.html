@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospitality Booking Cancellation Risk Analyzer</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Ambient glowing backgrounds -->
+    <div class="ambient-glow ambient-glow-1"></div>
+    <div class="ambient-glow ambient-glow-2"></div>
+    
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <i class="fa-solid fa-hotel logo-icon"></i>
+                <div class="logo-text">
+                    <h2>Antigravity</h2>
+                    <span>Hospitality Analytics</span>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="dashboard">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                </button>
+                <button class="nav-btn" data-tab="predictor">
+                    <i class="fa-solid fa-shield-halved"></i> Risk Predictor
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="model-badge">
+                    <span class="badge-dot"></span>
+                    <div class="badge-info">
+                        <strong>LightGBM Active</strong>
+                        <span>v1.0.0 (Production)</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <div class="header-title">
+                    <h1 id="header-main-title">Model Performance Dashboard</h1>
+                    <p id="header-sub-title">Production-grade predictive analytics for revenue optimization</p>
+                </div>
+                <div class="header-actions">
+                    <div class="date-badge">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span id="current-date">August 2026</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TAB: Dashboard -->
+            <section id="dashboard" class="tab-content active-tab">
+                <!-- KPI Dashboard Cards -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">LIGHTGBM ACCURACY</span>
+                            <i class="fa-solid fa-circle-check kpi-icon green-glow"></i>
+                        </div>
+                        <div class="kpi-value" id="kpi-accuracy">--</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend positive"><i class="fa-solid fa-arrow-up"></i> +5.68%</span>
+                            <span class="kpi-compare">vs Logistic Regression</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">LIGHTGBM RECALL</span>
+                            <i class="fa-solid fa-bullseye kpi-icon purple-glow"></i>
+                        </div>
+                        <div class="kpi-value" id="kpi-recall">--</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend positive"><i class="fa-solid fa-arrow-up"></i> +12.56%</span>
+                            <span class="kpi-compare">vs Baseline</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">ROC-AUC</span>
+                            <i class="fa-solid fa-chart-area kpi-icon blue-glow"></i>
+                        </div>
+                        <div class="kpi-value" id="kpi-roc-auc">--</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend positive"><i class="fa-solid fa-arrow-up"></i> 95.50%</span>
+                            <span class="kpi-compare">Discriminative Power</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <span class="kpi-title">PRECISION-RECALL AUC</span>
+                            <i class="fa-solid fa-scale-balanced kpi-icon orange-glow"></i>
+                        </div>
+                        <div class="kpi-value" id="kpi-pr-auc">--</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend positive"><i class="fa-solid fa-arrow-up"></i> 93.32%</span>
+                            <span class="kpi-compare">Imbalanced Target Power</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphs & Analysis -->
+                <div class="dashboard-grid">
+                    <!-- Comparison Panel -->
+                    <div class="dashboard-panel glass">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-sliders"></i> Model Comparison Report</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="metrics-table">
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Logistic Regression</th>
+                                        <th>LightGBM (Opt)</th>
+                                        <th>Improvement</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="metrics-table-body">
+                                    <tr>
+                                        <td><strong>Accuracy</strong></td>
+                                        <td>82.57%</td>
+                                        <td><span class="highlight-green">88.25%</span></td>
+                                        <td class="improvement-cell">+5.68%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Precision</strong></td>
+                                        <td>81.36%</td>
+                                        <td><span class="highlight-green">86.26%</span></td>
+                                        <td class="improvement-cell">+4.90%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Recall</strong></td>
+                                        <td>68.66%</td>
+                                        <td><span class="highlight-green">81.22%</span></td>
+                                        <td class="improvement-cell">+12.56%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>F1-Score</strong></td>
+                                        <td>74.47%</td>
+                                        <td><span class="highlight-green">83.67%</span></td>
+                                        <td class="improvement-cell">+9.20%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ROC-AUC</strong></td>
+                                        <td>90.42%</td>
+                                        <td><span class="highlight-green">95.50%</span></td>
+                                        <td class="improvement-cell">+5.08%</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>PR-AUC</strong></td>
+                                        <td>86.46%</td>
+                                        <td><span class="highlight-green">93.32%</span></td>
+                                        <td class="improvement-cell">+6.86%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="business-insights">
+                                <h4><i class="fa-regular fa-lightbulb"></i> Revenue Manager Insights</h4>
+                                <p>The LightGBM model exhibits superior Recall (81.22%). This guarantees the retrieval of 4 out of 5 actual cancellations, which allows for dynamic room overbooking strategies, preserving average daily rate (ADR) during peak season.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Global SHAP Explanations -->
+                    <div class="dashboard-panel glass">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-globe"></i> Global Feature Contributions (SHAP)</h3>
+                        </div>
+                        <div class="panel-body centering">
+                            <div class="shap-img-container">
+                                <img src="/outputs/shap_summary.png" alt="SHAP Global Explanations" class="shap-summary-image">
+                            </div>
+                            <div class="shap-caption">
+                                <p><i class="fa-solid fa-info-circle"></i> SHAP values indicate how each feature impacts the model output. For example, <strong>Non-Refundable Deposits</strong> and <strong>longer Lead Times</strong> strongly accelerate cancellation probabilities, while requesting <strong>Parking Spaces</strong> or having <strong>Special Requests</strong> strongly anchors bookings.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB: Predictor -->
+            <section id="predictor" class="tab-content">
+                <div class="predictor-grid">
+                    <!-- Form Input Card -->
+                    <div class="dashboard-panel glass form-panel">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-pen-to-square"></i> Booking Details</h3>
+                        </div>
+                        <form id="prediction-form" class="panel-body">
+                            <div class="form-grid">
+                                <!-- Section: Stay details -->
+                                <div class="form-section">
+                                    <h4><i class="fa-regular fa-calendar-days"></i> Stay Details</h4>
+                                    
+                                    <div class="input-group">
+                                        <label for="lead_time">Lead Time (Days)</label>
+                                        <input type="number" id="lead_time" value="75" min="0" max="600" required>
+                                        <small>Days between booking date and arrival date</small>
+                                    </div>
+
+                                    <div class="input-row">
+                                        <div class="input-group">
+                                            <label for="stays_in_week_nights">Week Nights</label>
+                                            <input type="number" id="stays_in_week_nights" value="2" min="0" max="20" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="stays_in_weekend_nights">Weekend Nights</label>
+                                            <input type="number" id="stays_in_weekend_nights" value="1" min="0" max="10" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label for="adr">Average Daily Rate (ADR, €)</label>
+                                        <input type="number" id="adr" value="95" min="0" max="500" required step="any">
+                                    </div>
+                                </div>
+
+                                <!-- Section: Guest & Customer details -->
+                                <div class="form-section">
+                                    <h4><i class="fa-solid fa-users"></i> Guests & Customer Details</h4>
+                                    
+                                    <div class="input-row">
+                                        <div class="input-group">
+                                            <label for="adults">Adults</label>
+                                            <input type="number" id="adults" value="2" min="1" max="10" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="children">Children</label>
+                                            <input type="number" id="children" value="0" min="0" max="10" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label for="country">Country of Origin</label>
+                                        <select id="country" required>
+                                            <option value="PRT">PRT - Portugal (High Risk Base)</option>
+                                            <option value="GBR">GBR - United Kingdom</option>
+                                            <option value="FRA">FRA - France</option>
+                                            <option value="ESP">ESP - Spain</option>
+                                            <option value="DEU">DEU - Germany</option>
+                                            <option value="IRL">IRL - Ireland</option>
+                                            <option value="ITA">ITA - Italy</option>
+                                            <option value="BEL">BEL - Belgium</option>
+                                            <option value="BRA">BRA - Brazil</option>
+                                            <option value="USA">USA - United States</option>
+                                            <option value="Unknown" selected>Other / Unknown</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label for="customer_type">Customer Type</label>
+                                        <select id="customer_type" required>
+                                            <option value="Transient" selected>Transient (Standard individual)</option>
+                                            <option value="Transient-Party">Transient-Party (Associated with group)</option>
+                                            <option value="Contract">Contract</option>
+                                            <option value="Group">Group</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Section: Operational details -->
+                                <div class="form-section">
+                                    <h4><i class="fa-solid fa-sliders"></i> Operations & Booking Policy</h4>
+                                    
+                                    <div class="input-group">
+                                        <label for="deposit_type">Deposit Type</label>
+                                        <select id="deposit_type" required>
+                                            <option value="No Deposit" selected>No Deposit</option>
+                                            <option value="Non Refund">Non Refund (High Risk Marker)</option>
+                                            <option value="Refundable">Refundable</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label for="market_segment">Market Segment</label>
+                                        <select id="market_segment" required>
+                                            <option value="Online TA" selected>Online TA (Travel Agent)</option>
+                                            <option value="Offline TA/TO">Offline TA/TO (Tour Operator)</option>
+                                            <option value="Direct">Direct Booking</option>
+                                            <option value="Groups">Groups Segment</option>
+                                            <option value="Corporate">Corporate segment</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-row">
+                                        <div class="input-group">
+                                            <label for="total_of_special_requests">Special Requests</label>
+                                            <select id="total_of_special_requests" required>
+                                                <option value="0" selected>0 Requests</option>
+                                                <option value="1">1 Request</option>
+                                                <option value="2">2 Requests</option>
+                                                <option value="3">3+ Requests</option>
+                                            </select>
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="required_car_parking_spaces">Parking Requested</label>
+                                            <select id="required_car_parking_spaces" required>
+                                                <option value="0" selected>No</option>
+                                                <option value="1">Yes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-row">
+                                        <div class="input-group">
+                                            <label for="booking_changes">Booking Changes</label>
+                                            <input type="number" id="booking_changes" value="0" min="0" max="20" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <label for="previous_cancellations">Prev. Cancellations</label>
+                                            <input type="number" id="previous_cancellations" value="0" min="0" max="20" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="submit-btn" id="predict-btn">
+                                <span class="btn-text"><i class="fa-solid fa-wand-magic-sparkles"></i> Predict Cancellation Risk</span>
+                                <span class="spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Predictions Output Card -->
+                    <div class="dashboard-panel glass result-panel">
+                        <div class="panel-header">
+                            <h3><i class="fa-solid fa-square-poll-vertical"></i> Analysis Results</h3>
+                        </div>
+                        <div class="panel-body centering" id="result-placeholder">
+                            <div class="empty-state">
+                                <i class="fa-solid fa-arrow-left empty-icon"></i>
+                                <h3>Awaiting Input</h3>
+                                <p>Provide the booking details on the left and click predict to run the ML explanation pipeline.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-body hidden" id="result-content">
+                            <!-- Gauge -->
+                            <div class="gauge-container">
+                                <div class="risk-gauge">
+                                    <svg viewBox="0 0 100 100" class="gauge-svg">
+                                        <circle cx="50" cy="50" r="42" class="gauge-bg" />
+                                        <circle cx="50" cy="50" r="42" class="gauge-fill" id="gauge-fill-arc" />
+                                    </svg>
+                                    <div class="gauge-text">
+                                        <span id="risk-percentage">0%</span>
+                                        <label>Cancellation Risk</label>
+                                    </div>
+                                </div>
+                                <div class="risk-badge-container">
+                                    <span class="risk-badge" id="risk-badge-val">LOW RISK</span>
+                                </div>
+                            </div>
+
+                            <!-- Explanation Text -->
+                            <div class="risk-explanation-text">
+                                <p id="risk-summary-sentence">This booking is highly likely to cancel due to severe risk factors.</p>
+                            </div>
+
+
+                            <!-- Mitigation Action Plan Checklist -->
+                            <div class="mitigation-panel" id="mitigation-panel">
+                                <h4><i class="fa-solid fa-list-check"></i> Recommended Mitigation Actions</h4>
+                                <ul class="mitigation-list" id="mitigation-list-items">
+                                    <!-- Dynamic Checklist items injected here -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Fullscreen Modal for Global SHAP summary image -->
+    <div id="shap-modal" class="modal">
+        <span class="close-modal">&times;</span>
+        <div class="modal-wrapper">
+            <img class="modal-content" id="modal-img">
+            <div id="modal-caption"></div>
+        </div>
+    </div>
+
+    <!-- Script Entry -->
+    <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
+</body>
+</html>

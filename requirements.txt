@@ -7,3 +7,4 @@ matplotlib>=3.7.0
 joblib>=1.2.0
 requests>=2.30.0
 Flask>=3.0.0
+gunicorn
